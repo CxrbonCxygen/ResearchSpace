@@ -1,0 +1,16 @@
+**/node_modules/
+**/.env*
+**/.wrangler/
+**/.sites-runtime/
+**/.local-signing/
+**/outputs/
+**/work/
+**/.codex/
+**/.agents/
+**/*.tsbuildinfo
+**/*.p12
+**/*.jks
+**/*.keystore
+**/*.dpapi*
+**/*.log
+/android-build-tools/

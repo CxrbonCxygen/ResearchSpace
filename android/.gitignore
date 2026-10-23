@@ -1,0 +1,4 @@
+/.local-signing/
+/build/
+/outputs/
+/app/src/main/assets/web/

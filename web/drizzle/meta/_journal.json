@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1792330881197,
+      "tag": "0000_little_quasimodo",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1792381111096,
+      "tag": "0001_careful_ultimates",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792736627572,
+      "tag": "0002_illegal_solo",
+      "breakpoints": true
+    }
+  ]
+}

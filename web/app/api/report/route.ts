@@ -1,0 +1,14 @@
+import { env } from 'cloudflare:workers';
+import { z } from 'zod';
+import { readState,writeState,digest } from '../../../lib/store';
+const report=z.object({project:z.string().min(1).max(120),experiment:z.string().min(1).max(120),dataset:z.string().min(1).max(100),method:z.string().max(200).optional(),metric:z.number().finite().nullable().optional(),fid:z.number().finite().optional(),epoch:z.number().nonnegative().optional(),total_epoch:z.number().nonnegative().optional(),train_loss:z.number().finite().optional(),val_loss:z.number().finite().optional(),gpu_util:z.number().min(0).max(100).optional(),status:z.enum(['running','completed','failed','queued']).optional()});
+export async function POST(request:Request){
+const key=request.headers.get('authorization')?.replace(/^Bearer /i,'');if(!key)return Response.json({error:'需要 ResearchSpace 上报令牌'},{status:401});
+const owner=await env.DB!.prepare('SELECT user_id FROM research_report_keys WHERE hash=?').bind(await digest(key)).first<{user_id:string}>();if(!owner)return Response.json({error:'上报令牌无效或已轮换'},{status:401});
+let data:z.infer<typeof report>;try{const raw=await request.text();if(raw.length>12000)throw new Error();data=report.parse(JSON.parse(raw));}catch{return Response.json({error:'请提供 project、experiment、dataset 和有效指标'},{status:400});}
+for(let attempt=0;attempt<3;attempt++){
+const {state,revision}=await readState(owner.user_id);const p=state.projects.find(p=>p.id===data.project||p.name===data.project);if(!p)return Response.json({error:'请先在界面创建项目'},{status:404});if(!p.datasets.includes(data.dataset))return Response.json({error:'请先在项目中添加此数据集'},{status:400});if(data.fid!==undefined&&p.metric.toLowerCase()!=='fid')return Response.json({error:'项目不是 FID 指标，请使用 metric 字段'},{status:400});
+let e=state.experiments.find(e=>e.projectId===p.id&&e.name===data.experiment);if(!e){if(state.experiments.length>=4000)return Response.json({error:'请先归档实验记录'},{status:409});e={id:crypto.randomUUID(),projectId:p.id,name:data.experiment,method:data.method??p.method,dataset:data.dataset,value:null,status:'running',epoch:0,totalEpoch:0,loss:null,valLoss:null,gpu:null,notes:'服务器主动上报',updated:'',demo:false};state.experiments.push(e);}
+e.demo=false;e.dataset=data.dataset;e.updated=new Date().toISOString();if(data.method!==undefined)e.method=data.method;if(data.metric!==undefined||data.fid!==undefined)e.value=data.metric??data.fid??null;if(data.status!==undefined)e.status=data.status;if(data.epoch!==undefined)e.epoch=data.epoch;if(data.total_epoch!==undefined)e.totalEpoch=data.total_epoch;if(data.train_loss!==undefined)e.loss=data.train_loss;if(data.val_loss!==undefined)e.valLoss=data.val_loss;if(data.gpu_util!==undefined)e.gpu=data.gpu_util;
+if(await writeState(owner.user_id,state,revision))return Response.json({ok:true,experiment:e.id});}
+return Response.json({error:'并发更新，请稍后重试'},{status:409});}

@@ -1,0 +1,9 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {trainingSnapshotSchema,flattenPoints,splitTraining} from '../lib/training-model.ts';
+const sample=()=>({runKey:'test-run',name:'双卡训练',projectId:'dllm',dataset:'GSM8K',maxSteps:500,currentStep:2,historyStep:2,status:'running',observedAt:'2026-10-23T05:00:00Z',source:'测试',logPath:'/runs/test',gpus:[],evaluations:[],points:[{step:1,values:{loss:-.02,learning_rate:.000005}},{step:2,values:{loss:.15}}]});
+test('negative losses and scientific-scale learning rates remain exact',()=>{const parsed=trainingSnapshotSchema.parse(sample()),result=splitTraining(parsed);assert.equal(result.points.length,3);assert.equal(result.points[0].value,-.02);assert.equal(result.points[1].value,.000005);assert.ok(!('points' in result.meta));});
+test('repeated metric points deduplicate by step and name without mixing runs',()=>{const a=flattenPoints([{step:1,values:{loss:1}},{step:1,values:{loss:2,grad_norm:3}}]);assert.equal(a.length,2);assert.equal(a[0].value,2);});
+test('invalid steps, non-finite values and mismatched evaluation totals are rejected',()=>{assert.ok(!trainingSnapshotSchema.safeParse({...sample(),currentStep:501}).success);assert.ok(!trainingSnapshotSchema.safeParse({...sample(),historyStep:3}).success);assert.ok(!trainingSnapshotSchema.safeParse({...sample(),points:[{step:1,values:{loss:Infinity}}]}).success);assert.ok(!trainingSnapshotSchema.safeParse({...sample(),evaluations:[{name:'base',length:256,samples:10,correct:11,accuracy:.5,seconds:3}]}).success);});
+test('new training migration is additive and scopes every primary key to its owner',()=>{const sql=readFileSync(new URL('../drizzle/0002_illegal_solo.sql',import.meta.url),'utf8');assert.ok(!/DROP|ALTER\s+TABLE\s+research_workspaces/i.test(sql));assert.ok(sql.includes('PRIMARY KEY(`user_id`, `run_key`, `step`, `metric`)'));});
