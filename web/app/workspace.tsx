@@ -2,7 +2,7 @@
 import React,{useState,useEffect,useRef,useCallback} from 'react';
 import {Activity,ArrowDownRight,ArrowRight,ArrowUpRight,BookOpen,Check,CheckCircle2,ChevronLeft,ChevronRight,Cloud,Cpu,Database,Download,FlaskConical,Folder,Layers,LayoutDashboard,Link2,ListTodo,Menu,MoreHorizontal,Pencil,Plus,RefreshCw,Search,Settings,Target,Terminal,Trash2,X,Zap} from 'lucide-react';
 import {State,Project,Experiment,Card,Task,TaskCategory,categoriesForDate,uncategorized,normalizeState,topics,today,uid,emptyState,tasksForDate,saveTaskOccurrence,skipTaskOccurrence,createRepeatRule,stopRepeatRule,repeatDescription,shiftDate} from '../lib/model';
-import {Formula,MathText} from './math-content';
+import {Formula,MathText} from './lazy-math';
 import {RoundedSelect,SelectPortalContext} from './rounded-select';
 import {workspaceFetch} from '../lib/workspace-api';
 type View='research'|'learn'|'today';
