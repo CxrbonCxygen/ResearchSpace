@@ -26,11 +26,11 @@ os.replace(canonical,unsigned)
 aligned=stage/'aligned.apk';run(sdk/'zipalign.exe','-f','-p','4',unsigned,aligned)
 keystore=root/'.local-signing'/'researchspace-release.p12'
 if not keystore.exists():run(java/'keytool.exe','-genkeypair','-keystore',keystore,'-storetype','PKCS12','-alias','researchspace','-keyalg','RSA','-keysize','3072','-sigalg','SHA256withRSA','-validity','10000','-dname','CN=ResearchSpace Personal, O=Personal Workspace','-storepass:env','RESEARCHSPACE_APK_KS_PASS','-keypass:env','RESEARCHSPACE_APK_KS_PASS')
-output=root/'outputs';output.mkdir(exist_ok=True);apk=output/'ResearchSpace-1.0.2.apk'
+output=root/'outputs';output.mkdir(exist_ok=True);apk=output/'ResearchSpace-1.0.3.apk'
 run(java/'java.exe','-jar',sdk/'lib/apksigner.jar','sign','--ks',keystore,'--ks-key-alias','researchspace','--ks-pass','env:RESEARCHSPACE_APK_KS_PASS','--key-pass','env:RESEARCHSPACE_APK_KS_PASS','--out',apk,aligned)
 run(java/'java.exe','-jar',sdk/'lib/apksigner.jar','verify','--verbose','--print-certs',apk)
 run(sdk/'aapt2.exe','dump','badging',aligned)
-info={'name':'ResearchSpace','version':'1.0.2','package':'cn.researchspace.personal','minAndroid':'8.0','bytes':apk.stat().st_size,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'builtAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'cloud':'https://researchspace-chenxin.cxrboncxygen.chatgpt.site/','offline':True}
+info={'name':'ResearchSpace','version':'1.0.3','package':'cn.researchspace.personal','minAndroid':'8.0','bytes':apk.stat().st_size,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'builtAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'cloud':'https://researchspace-chenxin.cxrboncxygen.chatgpt.site/','offline':True}
 (output/'release.json').write_text(json.dumps(info,ensure_ascii=False,indent=2),encoding='utf8')
 target=web/'public/downloads';target.mkdir(exist_ok=True);shutil.copy2(apk,target/'researchspace.apk');shutil.copy2(output/'release.json',target/'researchspace.json')
 print(json.dumps(info,ensure_ascii=False,indent=2));print(apk)

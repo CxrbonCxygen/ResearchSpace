@@ -16,3 +16,8 @@ The training dashboard now opens inside the app. Open an experiment while online
 Version code 3 uses the same package name and signing certificate as 1.0.1. Install over the existing app to retain local records; do not uninstall first.
 
 For your own build, place the Android SDK platform/build-tools and JDK in `../android-build-tools`, or adapt the two build scripts to their installed locations. This project uses JDK 17, Android platform 35 and build-tools 35. Generate and retain your own release signing key; the original owner's signing key is deliberately excluded from source control.
+
+
+## Version 1.0.3
+
+Keeps horizontal experiment-table scrolling inside the table after switching datasets or tabs. Screen-reader column labels remain contained in the table. Package name and release signing certificate remain unchanged; install over 1.0.2 to retain local records.

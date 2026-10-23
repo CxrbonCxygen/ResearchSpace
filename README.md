@@ -3,7 +3,7 @@
 科研项目、训练可视化、知识卡片与每日推进，配套可离线使用的 Android APP。
 
 - [网站](https://researchspace-chenxin.cxrboncxygen.chatgpt.site/)
-- [Android 1.0.2 下载](https://github.com/CxrbonCxygen/ResearchSpace/releases/tag/v1.0.2)
+- [Android 1.0.3 下载](https://github.com/CxrbonCxygen/ResearchSpace/releases/tag/v1.0.3)
 
 ## 使用
 
@@ -46,3 +46,8 @@ node node_modules/vite/bin/vite.js build --config mobile/vite.config.ts
 ## 验证范围
 
 当前版本通过类型检查、35 项自动检查、离线前端构建、安卓编译与 v2/v3 签名校验。原生安装包保持包名和签名连续，版本码递增。自动检查覆盖离线曲线缓存、重新连接、状态合并和历史记录；仍需在实际手机上确认厂商 WebView 与安装行为。
+
+
+### 1.0.3
+
+修复手机科研工作台在概览、实验记录中选择 L512 后的整页横移。表格仍可独立横向滑动，支持 320/360/390/430 像素宽度。

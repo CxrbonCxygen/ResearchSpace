@@ -1,11 +1,11 @@
 {
   "name": "ResearchSpace",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "package": "cn.researchspace.personal",
   "minAndroid": "8.0",
   "bytes": 1190311,
-  "sha256": "53df5ee884d430c66d9ceb0b7146e3cd6c2f36f65109c334ee8963f9aa236c8d",
-  "builtAt": "2026-10-23T08:45:56.719930+00:00",
+  "sha256": "756a3376e51d7965b4b05cccd73521348a3d62e3b9b5c080e276d0927618bbe5",
+  "builtAt": "2026-10-23T13:05:36.779928+00:00",
   "cloud": "https://researchspace-chenxin.cxrboncxygen.chatgpt.site/",
   "offline": true
 }
