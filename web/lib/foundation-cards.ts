@@ -1,4 +1,6 @@
 import type {Card,State} from './model.ts';
+import {expansionCards} from './knowledge-expansion.ts';
+import {correctKnowledge} from './knowledge-corrections.ts';
 
 const sources={
  algebra:['D2L · 线性代数','https://d2l.ai/chapter_preliminaries/linear-algebra.html'],
@@ -228,11 +230,14 @@ export const foundationCards:Card[]=[
  '常沿快时间做 Range FFT、慢时间做 Doppler FFT。实际结果受采样、窗函数、静态杂波、MIMO 时序和速度模糊影响；先读数据轴与雷达参数。','FFT、相位、快时间、慢时间、无线感知','radar'),
 ];
 
-export const FOUNDATION_VERSION=1;
+correctKnowledge(foundationCards);
+export const FOUNDATION_VERSION=2;
 export function installFoundationCards(state:State):boolean{
  if(state.knowledgeVersion>=FOUNDATION_VERSION)return false;
+ const previousVersion=state.knowledgeVersion;
+ correctKnowledge(state.cards);
  const ids=new Set(state.cards.map(c=>c.id)),titles=new Set(state.cards.map(c=>c.title.trim().toLocaleLowerCase()));
- for(const c of foundationCards){if(state.cards.length>=2000)break;if(!ids.has(c.id)&&!titles.has(c.title.toLocaleLowerCase())){state.cards.push(structuredClone(c));ids.add(c.id);titles.add(c.title.toLocaleLowerCase());}}
+ for(const c of [...(previousVersion<1?foundationCards:[]),...expansionCards]){if(state.cards.length>=2000)break;if(!ids.has(c.id)&&!titles.has(c.title.toLocaleLowerCase())){state.cards.push(structuredClone(c));ids.add(c.id);titles.add(c.title.toLocaleLowerCase());}}
  state.knowledgeVersion=FOUNDATION_VERSION;
  return true;
 }
